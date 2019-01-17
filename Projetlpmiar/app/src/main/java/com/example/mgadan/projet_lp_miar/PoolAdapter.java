@@ -91,7 +91,6 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
             });
                 if(pool.isVisited()){
                     isVisited.setText("Visité");
-                    convertView.setBackground();
                 }else{
                     isVisited.setText("Pas Visité");
                 }
