@@ -35,11 +35,11 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     Float translationY = 100f;
     Boolean isMenuOpen = false;
     TextView tel, adresse, url;
-
+    Button isVisited;
     Pool pool;
     int position;
     RatingBar ratingBar;
-
+    Intent beforeIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             pool = (Pool) intent.getSerializableExtra("pool");
             position = intent.getIntExtra("position", -1);
             ratingBar = (RatingBar) findViewById(R.id.rating_bar);
-            ratingBar.setNumStars(pool.getRate());
+            ratingBar.setRating(pool.getRate());
             ratingBar.setOnRatingBarChangeListener(this);
 
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -64,18 +64,8 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-            final Button isVisited = (Button) findViewById(R.id.isVisited);
-            isVisited.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    pool.setVisited(!pool.isVisited());
-                    if(pool.isVisited()){
-                        isVisited.setText("Visité");
-                    }else{
-                        isVisited.setText("Non visité");
-                    }
-                }
-            });
+            isVisited = (Button) findViewById(R.id.isVisited);
+            isVisited.setOnClickListener(this);
 
             if(pool.isVisited()){
                 isVisited.setText("Visité");
@@ -267,7 +257,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", tel.getText());
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this, "Copied in the clopyboard", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
                 break;
             case R.id.url:
                 if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -278,7 +268,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", url.getText());
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this, "Copied in the clopyboard", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
                 break;
             case R.id.adresse:
                 if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -289,7 +279,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", adresse.getText());
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this, "Copied in the clopyboard", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
                 break;
             case R.id.fabCalendar:
                 Toast.makeText(this, "Calendar", Toast.LENGTH_LONG).show();
@@ -298,6 +288,18 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 Intent intent1 = new Intent(Intent.ACTION_DIAL);
                 intent1.setData(Uri.parse("tel:" + tel.getText()));
                 startActivity(intent1);
+                break;
+            case R.id.isVisited:
+                pool.setVisited(!pool.isVisited());
+                beforeIntent = new Intent();
+                beforeIntent.putExtra ( "nvPool" , pool);
+                beforeIntent.putExtra ( "index" , position);
+                setResult (this.RESULT_OK, beforeIntent);
+                if(pool.isVisited()){
+                    isVisited.setText("Visité");
+                }else{
+                    isVisited.setText("Non visité");
+                }
                 break;
         }
     }
@@ -309,7 +311,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
         pool.setRate((int) rating);
-        Intent beforeIntent = new Intent();
+        beforeIntent = new Intent();
         beforeIntent.putExtra ( "nvPool" , pool);
         beforeIntent.putExtra ( "index" , position);
         setResult (this.RESULT_OK, beforeIntent);
@@ -317,7 +319,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed() {
-        Intent beforeIntent = new Intent();
+        beforeIntent = new Intent();
         beforeIntent.putExtra ( "nvPool" , pool);
         beforeIntent.putExtra ( "index" , position);
         setResult (this.RESULT_OK, beforeIntent);
