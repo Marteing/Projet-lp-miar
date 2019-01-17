@@ -5,15 +5,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -24,20 +28,23 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 
-public class PoolFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class PoolFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
 
     private int nbPool = 0;
     private PoolAdapter monAdapter;
     private List<Pool> list_pools = new ArrayList<Pool>();
     private String url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole";
     int FLAG_ACTIVITY = 1;
-
+    ImageButton img1, img2, img3, img4;
     private static final String PREFS_TAG = "SharedPrefs";
     private static final String PRODUCT_TAG = "MyProduct";
     ListView listView;
@@ -59,6 +66,16 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 setList_Pools();
             }
         }
+
+        img1 = (ImageButton) view.findViewById(R.id.img1_header);
+        img2 = (ImageButton) view.findViewById(R.id.img2_header);
+        img3 = (ImageButton) view.findViewById(R.id.img3_header);
+        img4 = (ImageButton) view.findViewById(R.id.img4_header);
+
+        img1.setOnClickListener(this);
+        img2.setOnClickListener(this);
+        img3.setOnClickListener(this);
+        img4.setOnClickListener(this);
 
         return view;
     }
@@ -301,5 +318,43 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         String json = sharedPref.getString("pool" + index, "");
         Pool pool = gson.fromJson(json, Pool.class);
         return pool;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.img1_header:
+                Collections.sort(list_pools, new Comparator<Pool>() {
+                    @Override
+                    public int compare(Pool pool, Pool t1) {
+                        if(pool.getAccessibiliteHandicap() == null){
+                            return -1;
+                        }
+                        if(t1.getAccessibiliteHandicap() == null){
+                            return 1;
+                        }
+                        if(pool.getAccessibiliteHandicap().equals("OUI")
+                                && t1.getAccessibiliteHandicap().equals("OUI")
+                                || pool.getAccessibiliteHandicap().equals("NON")
+                                && t1.getAccessibiliteHandicap().equals("NON") ){
+                            return 0;
+                        }else if(pool.getAccessibiliteHandicap().equals("OUI") && t1.getAccessibiliteHandicap().equals("NON")){
+                            return 1;
+                        }else{
+                            return -1;
+                        }
+                    }
+                });
+                monAdapter.notifyDataSetChanged();
+                break;
+            case R.id.img2_header:
+                break;
+            case R.id.img3_header:
+                break;
+            case R.id.img4_header:
+                break;
+        }
+
     }
 }
