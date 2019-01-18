@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class DetailPoolActivity extends AppCompatActivity implements View.OnClickListener, RatingBar.OnRatingBarChangeListener{
+public class DetailPoolActivity extends AppCompatActivity implements View.OnClickListener, RatingBar.OnRatingBarChangeListener {
 
     FloatingActionButton fabMenu, fabCall, fabCalendar, fabMaps;
 
@@ -50,7 +50,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
 
         Intent intent = getIntent();
 
-        if(intent != null){
+        if (intent != null) {
             pool = (Pool) intent.getSerializableExtra("pool");
             position = intent.getIntExtra("position", -1);
             ratingBar = (RatingBar) findViewById(R.id.rating_bar);
@@ -67,9 +67,9 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             isVisited = (Button) findViewById(R.id.isVisited);
             isVisited.setOnClickListener(this);
 
-            if(pool.isVisited()){
+            if (pool.isVisited()) {
                 isVisited.setText("Visité");
-            }else{
+            } else {
                 isVisited.setText("Non visité");
             }
 
@@ -96,84 +96,70 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
 
             int cpt = 0;
 
-            List<String> val = new ArrayList<>();
+            List<Integer> val = new ArrayList<>();
 
-                for (String header : pool.getInformation().keySet()){
-                    cel = new TextView(this); // création cellule
-                    cel.setText(header); // ajout du texte
-                    cel.setGravity(Gravity.CENTER); // centrage dans la cellule
-                    cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                    cel.setTextSize(24);
-                    // adaptation de la largeur de colonne à l'écran :
-                    cel.setLayoutParams( new TableRow.LayoutParams( 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1 ) );
-                    row.addView(cel);
-                    val.add(pool.getInformation().get(header));
-                    cpt++;
-                    // si nombre de colonne est égual à 2
-                    if(cpt == 2){
-                        table.addView(row);
-                        row = new TableRow(this); // création d'une nouvelle ligne
-
-                        for (String res : val){
-                            cel_val = new ImageView(this); // création cellule
-                            if(res != null){
-                                if(res.equals("OUI")){
-                                    cel_val.setImageResource(R.drawable.ic_check_box_green_24dp);
-                                }else{
-                                    if(res.equals("NON") || res.equals("-")){
-                                        cel_val.setImageResource(R.drawable.ic_cancel_red_24dp);
-                                    }else{
-                                        cel_transport = new TextView(this);
-                                        cel_transport.setText(res);
-                                    }
-                                }
-                            }else{
-                                cel_val.setImageResource(R.drawable.ic_live_help_black_24dp);
-                            }
-                            if(cel_transport == null){
-                                // adaptation de la largeur de colonne à l'écran :
-                                cel_val.setLayoutParams( new TableRow.LayoutParams( 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1 ) );
-                                row.addView(cel_val);
-                            }else{
-                                cel_transport.setGravity(Gravity.CENTER); // centrage dans la cellule
-                                // adaptation de la largeur de colonne à l'écran :
-                                cel_transport.setLayoutParams( new TableRow.LayoutParams( 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1 ) );
-                                row.addView(cel_transport);
-                                cel_transport = null;
-                            }
-
-                        }
-                        table.addView(row);
-                        val = new ArrayList<>();
-                        row = new TableRow(this); // création d'une nouvelle ligne
-                        cpt = 0;
-                    }
-                }
-                if(cpt != 0){
+            for (String header : pool.getInformation().keySet()) {
+                cel = new TextView(this); // création cellule
+                cel.setText(header); // ajout du texte
+                cel.setGravity(Gravity.CENTER); // centrage dans la cellule
+                cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                cel.setTextSize(24);
+                // adaptation de la largeur de colonne à l'écran :
+                cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                row.addView(cel);
+                val.add(pool.getInformation().get(header));
+                cpt++;
+                // si nombre de colonne est égual à 2
+                if (cpt == 2) {
                     table.addView(row);
                     row = new TableRow(this); // création d'une nouvelle ligne
 
-                    for (String res : val){
+                    for (int res : val) {
                         cel_val = new ImageView(this); // création cellule
-                        if(res != null){
-                            if(res.equals("OUI")){
-                                cel_val.setImageResource(R.drawable.ic_check_box_green_24dp);
-                            }else{
+                        switch (res) {
+                            case -1:
+                                cel_val.setImageResource(R.drawable.ic_live_help_black_24dp);
+                                break;
+                            case 0:
                                 cel_val.setImageResource(R.drawable.ic_cancel_red_24dp);
-                            }
-                        }else{
-                            cel_val.setImageResource(R.drawable.ic_live_help_black_24dp);
+                                break;
+                            case 1:
+                                cel_val.setImageResource(R.drawable.ic_check_box_green_24dp);
+                                break;
                         }
                         // adaptation de la largeur de colonne à l'écran :
-                        cel_val.setLayoutParams( new TableRow.LayoutParams( 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1 ) );
+                        cel_val.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
                         row.addView(cel_val);
                     }
                     table.addView(row);
+                    val = new ArrayList<>();
+                    row = new TableRow(this); // création d'une nouvelle ligne
+                    cpt = 0;
                 }
+            }
+            String transport = pool.getAccesTransportsCommun();
+            if(transport != null && !transport.equals("-")){
+                cel = new TextView(this); // création cellule
+                cel.setText("Transport"); // ajout du texte
+                cel.setGravity(Gravity.CENTER); // centrage dans la cellule
+                cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                cel.setTextSize(24);
+                // adaptation de la largeur de colonne à l'écran :
+                cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                row.addView(cel);
+                table.addView(row);
+                row = new TableRow(this); // création d'une nouvelle ligne
+                cel = new TextView(this); // création cellule
+                cel.setText(transport);
+                // adaptation de la largeur de colonne à l'écran :
+                cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                row.addView(cel);
+                table.addView(row);
+            }
         }
     }
 
-    private void initFabMenu(){
+    private void initFabMenu() {
         fabMenu = (FloatingActionButton) findViewById(R.id.fabMenu);
         fabMenu.setOnClickListener(this);
 
@@ -194,7 +180,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
         fabMaps.setOnClickListener(this);
     }
 
-    private void openMenu(){
+    private void openMenu() {
         isMenuOpen = !isMenuOpen;
 
         fabMenu.animate().setInterpolator(interpolator).rotationBy(45f).setDuration(300).start();
@@ -209,7 +195,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
         fabMaps.setEnabled(true);
     }
 
-    private void closeMenu(){
+    private void closeMenu() {
         isMenuOpen = !isMenuOpen;
 
         fabMenu.animate().setInterpolator(interpolator).rotationBy(-45f).setDuration(300).start();
@@ -235,11 +221,11 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.fabMenu:
-                if(isMenuOpen){
+                if (isMenuOpen) {
                     closeMenu();
-                }else{
+                } else {
                     openMenu();
                 }
                 break;
@@ -249,7 +235,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 this.startActivity(intent);
                 break;
             case R.id.tel:
-                if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
                     ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboard.setText(tel.getText());
                 } else {
@@ -260,7 +246,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
                 break;
             case R.id.url:
-                if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
                     ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboard.setText(url.getText());
                 } else {
@@ -271,7 +257,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
                 break;
             case R.id.adresse:
-                if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
                     ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
                     clipboard.setText(adresse.getText());
                 } else {
@@ -292,19 +278,19 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             case R.id.isVisited:
                 pool.setVisited(!pool.isVisited());
                 beforeIntent = new Intent();
-                beforeIntent.putExtra ( "nvPool" , pool);
-                beforeIntent.putExtra ( "index" , position);
-                setResult (this.RESULT_OK, beforeIntent);
-                if(pool.isVisited()){
+                beforeIntent.putExtra("nvPool", pool);
+                beforeIntent.putExtra("index", position);
+                setResult(this.RESULT_OK, beforeIntent);
+                if (pool.isVisited()) {
                     isVisited.setText("Visité");
-                }else{
+                } else {
                     isVisited.setText("Non visité");
                 }
                 break;
         }
     }
 
-    private void getHoraire(String id){
+    private void getHoraire(String id) {
 
     }
 
@@ -312,17 +298,17 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
         pool.setRate((int) rating);
         beforeIntent = new Intent();
-        beforeIntent.putExtra ( "nvPool" , pool);
-        beforeIntent.putExtra ( "index" , position);
-        setResult (this.RESULT_OK, beforeIntent);
+        beforeIntent.putExtra("nvPool", pool);
+        beforeIntent.putExtra("index", position);
+        setResult(this.RESULT_OK, beforeIntent);
     }
 
     @Override
     public void onBackPressed() {
         beforeIntent = new Intent();
-        beforeIntent.putExtra ( "nvPool" , pool);
-        beforeIntent.putExtra ( "index" , position);
-        setResult (this.RESULT_OK, beforeIntent);
+        beforeIntent.putExtra("nvPool", pool);
+        beforeIntent.putExtra("index", position);
+        setResult(this.RESULT_OK, beforeIntent);
         super.onBackPressed();
     }
 }
