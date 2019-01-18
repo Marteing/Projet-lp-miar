@@ -3,6 +3,8 @@ package com.example.mgadan.projet_lp_miar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -11,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.ImageViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -103,6 +108,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         note_header = view.findViewById(R.id.note_header);
 
         note_header.setOnClickListener(this);
+
         return view;
     }
 
@@ -113,7 +119,23 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void getNbPool(final String url) {
+    private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
+        float pk = (float) (180.f/Math.PI);
+
+        double a1 = lat_a / pk;
+        double a2 = lng_a / pk;
+        double b1 = lat_b / pk;
+        double b2 = lng_b / pk;
+
+        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+        double t3 = Math.sin(a1) * Math.sin(b1);
+        double tt = Math.acos(t1 + t2 + t3);
+
+        return 6366000 * tt;
+    }
+
+    private void getNbPool(final String url) {
         Ion.with(this)
                 .load("GET", url)
                 .asJsonObject()
@@ -132,7 +154,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
 
-    public void getPools(String url) {
+    private void getPools(String url) {
         Ion.with(this)
                 .load(url + "&rows=" + getNhitsFromSharedPreferences())
                 .asJsonObject()
@@ -313,12 +335,13 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 });
     }
 
-    public void setList_Pools() {
+    private void setList_Pools() {
         for (int i = 0; i < getNhitsFromSharedPreferences(); i++) {
             Pool add = getPoolFromSharedPreferences(i);
-
             monAdapter.add(add);
         }
+
+
     }
 
     @Override
@@ -345,20 +368,20 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         }
     }
 
-    public void setNhitsFromSharedPreferences(int nhits) {
+    private void setNhitsFromSharedPreferences(int nhits) {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("nhits", nhits);
         editor.commit();
     }
 
-    public int getNhitsFromSharedPreferences() {
+    private int getNhitsFromSharedPreferences() {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         int nhits = sharedPref.getInt("nhits", -1);
         return nhits;
     }
 
-    public void setPoolFromSharedPreferences(int index, Pool pool) {
+    private void setPoolFromSharedPreferences(int index, Pool pool) {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         Gson gson = new Gson();
@@ -368,7 +391,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         editor.commit();
     }
 
-    public Pool getPoolFromSharedPreferences(int index) {
+    private Pool getPoolFromSharedPreferences(int index) {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPref.getString("pool" + index, "");
@@ -389,6 +412,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     }
                 });
                 monAdapter.notifyDataSetChanged();
+                img1.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img3.setColorFilter(Color.argb(255, 0, 0, 0));
+                img4.setColorFilter(Color.argb(255, 0, 0, 0));
+
                 break;
             case R.id.img2_header:
                 monAdapter.sort(new Comparator<Pool>() {
@@ -398,6 +426,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     }
                 });
                 monAdapter.notifyDataSetChanged();
+
+                img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img2.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 break;
             case R.id.img3_header:
                 monAdapter.sort(new Comparator<Pool>() {
@@ -407,6 +440,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     }
                 });
                 monAdapter.notifyDataSetChanged();
+
+                img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img3.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 break;
             case R.id.img4_header:
                 monAdapter.sort(new Comparator<Pool>() {
@@ -416,6 +454,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     }
                 });
                 monAdapter.notifyDataSetChanged();
+
+                img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img4.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
                 break;
             case R.id.note_header:
                 monAdapter.sort(new Comparator<Pool>() {
@@ -427,6 +470,5 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 monAdapter.notifyDataSetChanged();
                 break;
         }
-
     }
 }
