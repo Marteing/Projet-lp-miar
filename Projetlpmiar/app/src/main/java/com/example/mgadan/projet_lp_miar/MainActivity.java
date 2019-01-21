@@ -2,6 +2,7 @@ package com.example.mgadan.projet_lp_miar;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -9,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -37,6 +40,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PoolFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_pool);
         }
+
+        Window window = this.getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
 
     }
 

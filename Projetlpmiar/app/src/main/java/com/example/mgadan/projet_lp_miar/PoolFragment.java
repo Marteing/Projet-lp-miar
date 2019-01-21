@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,9 +21,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.ImageViewCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +38,6 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -145,7 +139,16 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         for (String name : names)
             providers.add(locationManager.getProvider(name));
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        getDistance();
+
+        return view;
+    }
+
+    public void getDistance(){
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // No explanation needed, we can request the permission.
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -184,7 +187,6 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 }
             });
         }
-        return view;
     }
 
     private boolean isNetworkAvailable() {
@@ -646,5 +648,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 mBuilder.show();
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        getDistance();
     }
 }
