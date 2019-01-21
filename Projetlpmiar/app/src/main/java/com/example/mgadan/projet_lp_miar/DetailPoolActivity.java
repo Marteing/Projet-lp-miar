@@ -23,7 +23,21 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +55,10 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     RatingBar ratingBar;
     Intent beforeIntent;
 
+    String URL_SHEDULE = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole-horaires&q=";
+
+    Context context = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +70,8 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
 
         if (intent != null) {
             pool = (Pool) intent.getSerializableExtra("pool");
+
+            getHoraire(pool.getIdobj());
             position = intent.getIntExtra("position", -1);
             ratingBar = (RatingBar) findViewById(R.id.rating_bar);
             ratingBar.setRating(pool.getRate());
@@ -138,7 +158,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 }
             }
             String transport = pool.getAccesTransportsCommun();
-            if(transport != null && !transport.equals("-")){
+            if (transport != null && !transport.equals("-")) {
                 cel = new TextView(this); // création cellule
                 cel.setText("Transport"); // ajout du texte
                 cel.setGravity(Gravity.CENTER); // centrage dans la cellule
@@ -291,7 +311,146 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void getHoraire(String id) {
+        final TableLayout table = (TableLayout) findViewById(R.id.info_schedules);
 
+        Ion.with(this)
+                .load(URL_SHEDULE + id)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        JsonArray liste_res = result.getAsJsonArray("records");
+                        if (liste_res != null && liste_res.size() > 0) {
+                            Iterator<JsonElement> ite = liste_res.iterator();
+                            SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd");
+
+                            Calendar cal = Calendar.getInstance();
+                            Date today = null;
+                            try {
+                                today = dateFormat.parse(cal.get(Calendar.MONTH)+1 + "-" + cal.get(Calendar.DAY_OF_MONTH));
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            HashMap<Date, Date> hours;
+                            HashMap<DayOfWeek, HashMap<Date, Date>> schedules = new HashMap<>();
+                            DayOfWeek[] dayOfWeeks = DayOfWeek.values();
+                            for (int i = 0; i < dayOfWeeks.length; i++) {
+                                schedules.put(dayOfWeeks[i], new HashMap<Date, Date>());
+                            }
+                            /**
+                             * clé premier jour, heure_de_début et heure_de_fin
+                             */
+                            while (ite.hasNext()) {
+                                JsonObject schedule = ite.next().getAsJsonObject().getAsJsonObject("fields");
+                                String jsonDay = schedule.get("jour").getAsString();
+
+                                DayOfWeek day = null;
+                                switch (jsonDay) {
+                                    case "lundi":
+                                        day = dayOfWeeks[0];
+                                        break;
+                                    case "mardi":
+                                        day = dayOfWeeks[1];
+                                        break;
+                                    case "mercredi":
+                                        day = dayOfWeeks[2];
+                                        break;
+                                    case "jeudi":
+                                        day = dayOfWeeks[3];
+                                        break;
+                                    case "vendredi":
+                                        day = dayOfWeeks[4];
+                                        break;
+                                    case "samedi":
+                                        day = dayOfWeeks[5];
+                                        break;
+                                    case "dimanche":
+                                        day = dayOfWeeks[6];
+                                        break;
+                                }
+                                hours = schedules.get(day);
+                                String heure_debut_char = schedule.get("heure_debut").getAsString();
+                                if (heure_debut_char != null) {
+                                    try {
+                                        Date heure_debut = hourFormat.parse(heure_debut_char);
+
+                                        String date_debut_char = schedule.get("date_debut").getAsString();
+                                        String date_fin_char = schedule.get("date_fin").getAsString();
+                                        if(date_debut_char != null && date_fin_char != null){
+                                            Date date_debut = dateFormat.parse(date_debut_char.substring(5));
+                                            Date date_fin = dateFormat.parse(date_fin_char.substring(5));
+
+                                            if(today.after(date_debut) && today.before(date_fin)){
+                                                String heure_fin_char = schedule.get("heure_fin").getAsString();
+                                                Date heure_fin = hourFormat.parse(heure_fin_char);
+                                                hours.put(heure_debut, heure_fin);
+                                            }
+
+                                        }else{
+                                            String heure_fin_char = schedule.get("heure_fin").getAsString();
+                                            Date heure_fin = hourFormat.parse(heure_fin_char);
+                                            hours.put(heure_debut, heure_fin);
+                                        }
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                }
+
+                                schedules.put(day, hours);
+                            }
+                            List<DayOfWeek> sortedKeys = new ArrayList<DayOfWeek>(schedules.size());
+                            sortedKeys.addAll(schedules.keySet());
+                            Collections.sort(sortedKeys);
+
+                            TextView cel; // création des cellules
+                            TableRow row; // création d'un élément : ligne
+
+                            for (DayOfWeek day : sortedKeys) {
+
+                                row = new TableRow(context);
+                                cel = new TextView(context); // création cellule
+                                cel.setText(day.toString().toLowerCase()); // ajout du texte
+                                cel.setGravity(Gravity.LEFT); // centrage dans la cellule
+                                cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                                cel.setTextSize(24);
+                                // adaptation de la largeur de colonne à l'écran :
+                                cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                row.addView(cel);
+
+                                hours = schedules.get(day);
+                                if (!hours.isEmpty()) {
+                                    List<Date> sortedHours = new ArrayList<Date>(hours.size());
+                                    sortedHours.addAll(hours.keySet());
+                                    Collections.sort(sortedHours);
+
+                                    for (Date d : sortedHours) {
+                                        cel = new TextView(context); // création cellule
+                                        cel.setText(hourFormat.format(d) + "-" + hourFormat.format(hours.get(d))); // ajout du texte
+                                        cel.setGravity(Gravity.CENTER); // centrage dans la cellule
+                                        cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                                        cel.setTextSize(18);
+                                        // adaptation de la largeur de colonne à l'écran :
+                                        cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                        row.addView(cel);
+                                    }
+                                } else {
+                                    cel = new TextView(context); // création cellule
+                                    cel.setText("Close"); // ajout du texte
+                                    cel.setGravity(Gravity.CENTER); // centrage dans la cellule
+                                    cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                                    cel.setTextSize(18);
+                                    // adaptation de la largeur de colonne à l'écran :
+                                    cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                                    row.addView(cel);
+                                }
+
+                                table.addView(row);
+                            }
+                        }
+                    }
+                });
     }
 
     @Override

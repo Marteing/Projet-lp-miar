@@ -25,19 +25,19 @@
            tools:ignore="InvalidId"
            >
 
-           <!--<ImageButton-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_height="wrap_content"-->
-               <!--android:layout_gravity="end"-->
-               <!--android:id="@+id/isFavoris"-->
-               <!--android:textSize="12sp"-->
-               <!--android:background="@null"-->
-               <!--android:layout_alignParentEnd="true"-->
-               <!--android:layout_alignParentRight="true"-->
-               <!--android:textColor="#FFF"-->
-               <!--android:text="Favoris"-->
-               <!--android:src="@drawable/ic_settings_black_24dp"-->
-               <!--android:tint="@android:color/white"/>-->
+           <ImageButton
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="end"
+               android:id="@+id/isFavoris"
+               android:textSize="12sp"
+               android:background="@null"
+               android:layout_alignParentEnd="true"
+               android:layout_alignParentRight="true"
+               android:textColor="#FFF"
+               android:text="Favoris"
+               android:src="@drawable/ic_settings_black_24dp"
+               android:tint="@android:color/white"/>
        </android.support.v7.widget.Toolbar>
 
        <FrameLayout

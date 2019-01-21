@@ -86,12 +86,17 @@
             android:tint="#FFD700"
             />
 
-        <Button
-            android:layout_width="75dp"
+        <CheckBox
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/isVisited"
-            android:background="@null"
-            android:text="Visité"/>
+            />
+
+        <!--<Button-->
+            <!--android:layout_width="75dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@null"-->
+            <!--android:text="Visité"/>-->
 
     </LinearLayout>
 

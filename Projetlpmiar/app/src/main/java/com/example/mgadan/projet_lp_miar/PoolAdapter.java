@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,23 +81,16 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
                     img.setImageResource(R.drawable.ic_star_black_24dp);
                 }
             }
-            final Button isVisited = convertView.findViewById(R.id.isVisited);
+            final CheckBox isVisited = (CheckBox) convertView.findViewById(R.id.isVisited);
             isVisited.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     pool.setVisited(!pool.isVisited());
-                    if(pool.isVisited()){
-                        isVisited.setText("Visité");
-                    }else{
-                        isVisited.setText("Pas Visité");
-                    }
+                    isVisited.setChecked(pool.isVisited());
                 }
             });
-                if(pool.isVisited()){
-                    isVisited.setText("Visité");
-                }else{
-                    isVisited.setText("Pas Visité");
-                }
+            isVisited.setChecked(pool.isVisited());
+
         }
 
         return convertView;
