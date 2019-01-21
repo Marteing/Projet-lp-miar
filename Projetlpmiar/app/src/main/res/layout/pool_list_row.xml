@@ -92,6 +92,8 @@
             android:id="@+id/isVisited"
             />
 
+
+
         <!--<Button-->
             <!--android:layout_width="75dp"-->
             <!--android:layout_height="wrap_content"-->
@@ -99,5 +101,12 @@
             <!--android:text="Visité"/>-->
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="postion"
+        android:textSize="10dp"
+        android:textColor="#000"/>
 
 </LinearLayout>

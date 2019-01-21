@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class Pool implements Serializable {
 
+    private int position;
+
     private int bassinLoisir;
     private String commune;
     private int accesPmrEquipt;
@@ -34,6 +36,23 @@ public class Pool implements Serializable {
     private String accesTransportsCommun;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    private transient double  distanceBetweenUserAndPool = 0.00;
+
+    public double getDistanceBetweenUserAndPool() {
+        return distanceBetweenUserAndPool;
+    }
+
+    public void setDistanceBetweenUserAndPool(double distanceBetweenUserAndPool) {
+        this.distanceBetweenUserAndPool = distanceBetweenUserAndPool;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     private Map<String, Integer> information = new HashMap<>();
 

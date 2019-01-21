@@ -94,16 +94,21 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             }
 
             adresse = findViewById(R.id.adresse);
-            adresse.setText(pool.getAdresse() + ", " + pool.getCommune() + ", " + pool.getCp());
+            adresse.setText("Adresse : " + pool.getAdresse() + ", " + pool.getCommune() + ", " + pool.getCp());
             adresse.setOnClickListener(this);
+
+            if(pool.getInfosComplementaires() != null){
+                TextView info_complementaire = findViewById(R.id.information_complementaire);
+                info_complementaire.setText(pool.getInfosComplementaires());
+            }
 
 
             tel = findViewById(R.id.tel);
-            tel.setText(pool.getTel());
+            tel.setText("Numero de téléphone : " + pool.getTel());
             tel.setOnClickListener(this);
 
             url = findViewById(R.id.url);
-            url.setText(pool.getWeb());
+            url.setText("Website : " + pool.getWeb());
             url.setOnClickListener(this);
 
             TableLayout table = (TableLayout) findViewById(R.id.info_table);

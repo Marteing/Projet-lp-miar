@@ -34,8 +34,9 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
             //"Acces Transport"
     };
 
-    public PoolAdapter(Context context, List<Pool> pools) {
+    public PoolAdapter(Context context, List<Pool> pools, String[] criterSelected) {
         super(context, 0,  pools);
+        this.criterSelected = criterSelected;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -50,7 +51,6 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
         if(pool != null){
             rate =  new int[]{R.id.rate1, R.id.rate2, R.id.rate3, R.id.rate4, R.id.rate5};
             criter = new int[]{R.id.criter1, R.id.criter2, R.id.criter3, R.id.criter4};
-            criterSelected = new String[]{"Acces Handicapé","Solarium",  "Bassin Sportif", "Toboggan"};
             TextView name = (TextView) convertView.findViewById(R.id.name);
             name.setText(pool.getNomUsuel());
 
@@ -90,6 +90,13 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
                 }
             });
             isVisited.setChecked(pool.isVisited());
+
+            TextView distance = convertView.findViewById(R.id.distance);
+            if(pool.getDistanceBetweenUserAndPool() != 0.00){
+                distance.setText(Math.round(pool.getDistanceBetweenUserAndPool()) + " m");
+            }else{
+                distance.setText("");
+            }
 
         }
 
