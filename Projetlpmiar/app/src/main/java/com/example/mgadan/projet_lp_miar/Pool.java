@@ -10,30 +10,39 @@ import java.util.Map;
 
 public class Pool implements Serializable {
 
-    private int bassinLoisir;
+    private int position;
+
     private String commune;
-    private int accesPmrEquipt;
     private String tel;
     private String infosComplementaires;
     private String nomUsuel;
     private String adresse;
-    private int solarium;
-    private int libreService;
-    private int bassinSportif;
-    private int bassinApprentissage;
     private String web;
-    private int plongeoir;
     private String idobj;
     private String nomComplet;
-    private int toboggan;
-    private int pataugeoire;
-    private int accessibiliteHandicap;
     private String cp;
     private List<Double> location = null;
     private String moyenPaiement;
     private String accesTransportsCommun;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    private transient double  distanceBetweenUserAndPool = 0.00;
+
+    public double getDistanceBetweenUserAndPool() {
+        return distanceBetweenUserAndPool;
+    }
+
+    public void setDistanceBetweenUserAndPool(double distanceBetweenUserAndPool) {
+        this.distanceBetweenUserAndPool = distanceBetweenUserAndPool;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     private Map<String, Integer> information = new HashMap<>();
 
@@ -65,13 +74,6 @@ public class Pool implements Serializable {
         this.rate = rate;
     }
 
-    public int getBassinLoisir() {
-        return bassinLoisir;
-    }
-
-    public void setBassinLoisir(int bassinLoisir) {
-        this.bassinLoisir = bassinLoisir;
-    }
 
     public String getCommune() {
         return commune;
@@ -79,14 +81,6 @@ public class Pool implements Serializable {
 
     public void setCommune(String commune) {
         this.commune = commune;
-    }
-
-    public int getAccesPmrEquipt() {
-        return accesPmrEquipt;
-    }
-
-    public void setAccesPmrEquipt(int accesPmrEquipt) {
-        this.accesPmrEquipt = accesPmrEquipt;
     }
 
     public String getTel() {
@@ -121,52 +115,12 @@ public class Pool implements Serializable {
         this.adresse = adresse;
     }
 
-    public int getSolarium() {
-        return solarium;
-    }
-
-    public void setSolarium(int solarium) {
-        this.solarium = solarium;
-    }
-
-    public int getLibreService() {
-        return libreService;
-    }
-
-    public void setLibreService(int libreService) {
-        this.libreService = libreService;
-    }
-
-    public int getBassinSportif() {
-        return bassinSportif;
-    }
-
-    public void setBassinSportif(int bassinSportif) {
-        this.bassinSportif = bassinSportif;
-    }
-
-    public int getBassinApprentissage() {
-        return bassinApprentissage;
-    }
-
-    public void setBassinApprentissage(int bassinApprentissage) {
-        this.bassinApprentissage = bassinApprentissage;
-    }
-
     public String getWeb() {
         return web;
     }
 
     public void setWeb(String web) {
         this.web = web;
-    }
-
-    public int getPlongeoir() {
-        return plongeoir;
-    }
-
-    public void setPlongeoir(int plongeoir) {
-        this.plongeoir = plongeoir;
     }
 
     public String getIdobj() {
@@ -185,29 +139,6 @@ public class Pool implements Serializable {
         this.nomComplet = nomComplet;
     }
 
-    public int getToboggan() {
-        return toboggan;
-    }
-
-    public void setToboggan(int toboggan) {
-        this.toboggan = toboggan;
-    }
-
-    public int getPataugeoire() {
-        return pataugeoire;
-    }
-
-    public void setPataugeoire(int pataugeoire) {
-        this.pataugeoire = pataugeoire;
-    }
-
-    public int getAccessibiliteHandicap() {
-        return accessibiliteHandicap;
-    }
-
-    public void setAccessibiliteHandicap(int accessibiliteHandicap) {
-        this.accessibiliteHandicap = accessibiliteHandicap;
-    }
 
     public String getCp() {
         return cp;

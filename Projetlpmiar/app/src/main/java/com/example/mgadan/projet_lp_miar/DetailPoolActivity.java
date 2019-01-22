@@ -8,12 +8,15 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -64,6 +67,13 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_pool);
 
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // finally change the color
+        getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
+
         initFabMenu();
 
         Intent intent = getIntent();
@@ -94,16 +104,21 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             }
 
             adresse = findViewById(R.id.adresse);
-            adresse.setText(pool.getAdresse() + ", " + pool.getCommune() + ", " + pool.getCp());
+            adresse.setText("Adresse : " + pool.getAdresse() + ", " + pool.getCommune() + ", " + pool.getCp());
             adresse.setOnClickListener(this);
+
+            if(pool.getInfosComplementaires() != null){
+                TextView info_complementaire = findViewById(R.id.information_complementaire);
+                info_complementaire.setText(pool.getInfosComplementaires());
+            }
 
 
             tel = findViewById(R.id.tel);
-            tel.setText(pool.getTel());
+            tel.setText("Numero de téléphone : " + pool.getTel());
             tel.setOnClickListener(this);
 
             url = findViewById(R.id.url);
-            url.setText(pool.getWeb());
+            url.setText("Website : " + pool.getWeb());
             url.setOnClickListener(this);
 
             TableLayout table = (TableLayout) findViewById(R.id.info_table);
@@ -344,61 +359,62 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                              */
                             while (ite.hasNext()) {
                                 JsonObject schedule = ite.next().getAsJsonObject().getAsJsonObject("fields");
-                                String jsonDay = schedule.get("jour").getAsString();
+                                if(schedule.has("jour")){
+                                    String jsonDay = schedule.get("jour").getAsString();
+                                    DayOfWeek day = null;
+                                    switch (jsonDay) {
+                                        case "lundi":
+                                            day = dayOfWeeks[0];
+                                            break;
+                                        case "mardi":
+                                            day = dayOfWeeks[1];
+                                            break;
+                                        case "mercredi":
+                                            day = dayOfWeeks[2];
+                                            break;
+                                        case "jeudi":
+                                            day = dayOfWeeks[3];
+                                            break;
+                                        case "vendredi":
+                                            day = dayOfWeeks[4];
+                                            break;
+                                        case "samedi":
+                                            day = dayOfWeeks[5];
+                                            break;
+                                        case "dimanche":
+                                            day = dayOfWeeks[6];
+                                            break;
+                                    }
+                                    hours = schedules.get(day);
+                                    String heure_debut_char = schedule.get("heure_debut").getAsString();
+                                    if (heure_debut_char != null) {
+                                        try {
+                                            Date heure_debut = hourFormat.parse(heure_debut_char);
 
-                                DayOfWeek day = null;
-                                switch (jsonDay) {
-                                    case "lundi":
-                                        day = dayOfWeeks[0];
-                                        break;
-                                    case "mardi":
-                                        day = dayOfWeeks[1];
-                                        break;
-                                    case "mercredi":
-                                        day = dayOfWeeks[2];
-                                        break;
-                                    case "jeudi":
-                                        day = dayOfWeeks[3];
-                                        break;
-                                    case "vendredi":
-                                        day = dayOfWeeks[4];
-                                        break;
-                                    case "samedi":
-                                        day = dayOfWeeks[5];
-                                        break;
-                                    case "dimanche":
-                                        day = dayOfWeeks[6];
-                                        break;
-                                }
-                                hours = schedules.get(day);
-                                String heure_debut_char = schedule.get("heure_debut").getAsString();
-                                if (heure_debut_char != null) {
-                                    try {
-                                        Date heure_debut = hourFormat.parse(heure_debut_char);
+                                            String date_debut_char = schedule.get("date_debut").getAsString();
+                                            String date_fin_char = schedule.get("date_fin").getAsString();
+                                            if(date_debut_char != null && date_fin_char != null){
+                                                Date date_debut = dateFormat.parse(date_debut_char.substring(5));
+                                                Date date_fin = dateFormat.parse(date_fin_char.substring(5));
 
-                                        String date_debut_char = schedule.get("date_debut").getAsString();
-                                        String date_fin_char = schedule.get("date_fin").getAsString();
-                                        if(date_debut_char != null && date_fin_char != null){
-                                            Date date_debut = dateFormat.parse(date_debut_char.substring(5));
-                                            Date date_fin = dateFormat.parse(date_fin_char.substring(5));
+                                                if(today.after(date_debut) && today.before(date_fin)){
+                                                    String heure_fin_char = schedule.get("heure_fin").getAsString();
+                                                    Date heure_fin = hourFormat.parse(heure_fin_char);
+                                                    hours.put(heure_debut, heure_fin);
+                                                }
 
-                                            if(today.after(date_debut) && today.before(date_fin)){
+                                            }else{
                                                 String heure_fin_char = schedule.get("heure_fin").getAsString();
                                                 Date heure_fin = hourFormat.parse(heure_fin_char);
                                                 hours.put(heure_debut, heure_fin);
                                             }
-
-                                        }else{
-                                            String heure_fin_char = schedule.get("heure_fin").getAsString();
-                                            Date heure_fin = hourFormat.parse(heure_fin_char);
-                                            hours.put(heure_debut, heure_fin);
+                                        } catch (ParseException e1) {
+                                            e1.printStackTrace();
                                         }
-                                    } catch (ParseException e1) {
-                                        e1.printStackTrace();
                                     }
-                                }
 
-                                schedules.put(day, hours);
+                                    schedules.put(day, hours);
+                                }
                             }
                             List<DayOfWeek> sortedKeys = new ArrayList<DayOfWeek>(schedules.size());
                             sortedKeys.addAll(schedules.keySet());
