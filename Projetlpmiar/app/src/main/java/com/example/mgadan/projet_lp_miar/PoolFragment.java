@@ -50,7 +50,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     private String url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole";
     int FLAG_ACTIVITY = 1;
 
-    Button note_header;
+    ImageButton note_header;
     ImageButton img1, img2, img3, img4;
     private static final String PREFS_TAG = "SharedPrefs";
     private static final String PRODUCT_TAG = "MyProduct";

@@ -30,28 +30,28 @@
 
         <ImageView
             android:id="@+id/criter1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cancel_red_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/cross"
             />
         <ImageView
             android:id="@+id/criter2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cancel_red_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/cross"
             />
 
         <ImageView
             android:id="@+id/criter3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cancel_red_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/cross"
             />
         <ImageView
             android:id="@+id/criter4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_cancel_red_24dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/cross"
             />
 
         <ImageView

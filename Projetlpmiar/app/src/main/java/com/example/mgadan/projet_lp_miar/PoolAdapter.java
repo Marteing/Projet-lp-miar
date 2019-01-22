@@ -59,13 +59,13 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
                 int val = pool.getInformation().get(criterSelected[i]);
                 switch (val) {
                     case -1:
-                        img.setImageResource(R.drawable.ic_live_help_black_24dp);
+                        img.setImageResource(R.drawable.question);
                         break;
                     case 0:
-                        img.setImageResource(R.drawable.ic_cancel_red_24dp);
+                        img.setImageResource(R.drawable.cross);
                         break;
                     case 1:
-                        img.setImageResource(R.drawable.ic_check_box_green_24dp);
+                        img.setImageResource(R.drawable.check);
                         break;
                         default:
                             Toast.makeText(getContext(), "probleme : " + criterSelected[i], Toast.LENGTH_LONG).show();
