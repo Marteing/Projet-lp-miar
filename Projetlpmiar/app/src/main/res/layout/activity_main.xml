@@ -24,6 +24,17 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             tools:ignore="InvalidId">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/plouffe_logo"
+                android:layout_gravity="start" />
+
             <ImageButton
                 android:id="@+id/isFavoris"
                 android:layout_width="wrap_content"
@@ -37,6 +48,7 @@
                 android:textColor="#FFF"
                 android:textSize="12sp"
                 android:tint="@android:color/white" />
+            </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
         <FrameLayout

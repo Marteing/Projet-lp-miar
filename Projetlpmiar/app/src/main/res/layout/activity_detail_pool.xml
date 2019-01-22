@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/BlueHeader"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextAppearance="@style/ActionBarTitleStyle">
 
             <!--<ImageButton-->
                 <!--android:layout_width="wrap_content"-->
@@ -36,11 +37,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:id="@+id/isVisited"
-                android:textSize="12sp"
+                android:textSize="17sp"
                 android:background="@null"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:textColor="#FFF"
+                android:fontFamily="@font/splatoon2"
                 android:text="Visité"/>
 
         </android.support.v7.widget.Toolbar>

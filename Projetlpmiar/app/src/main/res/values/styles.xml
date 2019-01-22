@@ -15,6 +15,12 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ActionBarTitleStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/project_paintball</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">22dp</item>
+    </style>
 
 </resources>

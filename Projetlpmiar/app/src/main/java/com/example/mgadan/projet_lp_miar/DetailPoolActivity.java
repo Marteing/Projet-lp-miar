@@ -137,7 +137,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 cel = new TextView(this); // création cellule
                 cel.setText(header); // ajout du texte
                 cel.setGravity(Gravity.CENTER); // centrage dans la cellule
-                cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                cel.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/project_paintball.otf"));
                 cel.setTextSize(24);
                 // adaptation de la largeur de colonne à l'écran :
                 cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
@@ -153,13 +153,13 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                         cel_val = new ImageView(this); // création cellule
                         switch (res) {
                             case -1:
-                                cel_val.setImageResource(R.drawable.ic_live_help_black_24dp);
+                                cel_val.setImageResource(R.drawable.question);
                                 break;
                             case 0:
-                                cel_val.setImageResource(R.drawable.ic_cancel_red_24dp);
+                                cel_val.setImageResource(R.drawable.cross);
                                 break;
                             case 1:
-                                cel_val.setImageResource(R.drawable.ic_check_box_green_24dp);
+                                cel_val.setImageResource(R.drawable.check);
                                 break;
                         }
                         // adaptation de la largeur de colonne à l'écran :
@@ -429,7 +429,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                                 cel = new TextView(context); // création cellule
                                 cel.setText(day.toString().toLowerCase()); // ajout du texte
                                 cel.setGravity(Gravity.LEFT); // centrage dans la cellule
-                                cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                                cel.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/project_paintball.otf"));
                                 cel.setTextSize(24);
                                 // adaptation de la largeur de colonne à l'écran :
                                 cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
@@ -455,7 +455,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                                     cel = new TextView(context); // création cellule
                                     cel.setText("Close"); // ajout du texte
                                     cel.setGravity(Gravity.CENTER); // centrage dans la cellule
-                                    cel.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+                                    cel.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/splatoon2.otf"));
                                     cel.setTextSize(18);
                                     // adaptation de la largeur de colonne à l'écran :
                                     cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
