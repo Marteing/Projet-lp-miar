@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,18 +32,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -52,7 +48,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     private int nbPool = 0;
     private PoolAdapter monAdapter;
     private List<Pool> list_pools = new ArrayList<Pool>();
-    private String url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole";
+    private static String url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole";
     int FLAG_ACTIVITY = 1;
 
     Button note_header;
@@ -61,6 +57,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     private static final String PRODUCT_TAG = "MyProduct";
     ListView listView;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    PoolFragment poolFragment;
 
     private String[] criterSelected = new String[]{
             "Acces Handicapé",
@@ -81,7 +79,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             false,
             true,
     };
-    private String[] criterOptions = new String[]{
+    private static String[] criterOptions = new String[]{
             "Libre Service",
             "Solarium",
             "Bassin Loisir",
@@ -107,6 +105,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         listView.setAdapter(monAdapter);
         listView.setOnItemClickListener(this);
         if (isNetworkAvailable()) {
+            poolFragment = this;
             getNbPool(url);
         } else {
             if (getPoolFromSharedPreferences(0) != null) {
@@ -138,9 +137,6 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
 
         for (String name : names)
             providers.add(locationManager.getProvider(name));
-
-        getDistance();
-
         return view;
     }
 
@@ -158,10 +154,14 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 @Override
                 public void onLocationChanged(Location location) {
                     for (Pool p : list_pools) {
-                        p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
-                                p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
-                    }
+                        if(p != null){
+                            p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
+                                    p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
+                        }else{
+                            Log.d("chelou",   p + "" + list_pools.size());
+                        }
 
+                    }
                     monAdapter.sort(new Comparator<Pool>() {
                         @Override
                         public int compare(Pool o1, Pool o2) {
@@ -222,7 +222,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                         nbPool = result.getAsJsonPrimitive("nhits").getAsInt();
                         if (nbPool > getNhitsFromSharedPreferences()) {
                             setNhitsFromSharedPreferences(nbPool);
-                            getPools(url);
+                            new DownloadPool(poolFragment).execute();
                         } else {
                             setList_Pools();
                         }
@@ -231,185 +231,10 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
 
-    private void getPools(String url) {
-        Ion.with(this)
-                .load(url + "&rows=" + getNhitsFromSharedPreferences())
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        int cpt = 0;
-                        JsonArray liste_res = result.getAsJsonArray("records");
-                        Iterator<JsonElement> ite = liste_res.iterator();
-                        while (ite.hasNext()) {
-                            JsonObject pool = ite.next().getAsJsonObject().getAsJsonObject("fields");
-
-                            Pool item = new Pool();
-
-                            int bassinLoisir = -1;
-                            if (pool.has("bassin_loisir")) {
-                                bassinLoisir = pool
-                                        .getAsJsonPrimitive("bassin_loisir")
-                                        .getAsString()
-                                        .equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            String commune = pool.getAsJsonPrimitive("commune")
-                                    .getAsString();
-
-                            int accesPmrEquipt = pool
-                                    .getAsJsonPrimitive("acces_pmr_equipt")
-                                    .getAsString().equals("OUI")
-                                    ? 1
-                                    : 0;
-
-                            String tel = pool.getAsJsonPrimitive("tel").getAsString();
-
-                            String infosComplementaires = null;
-                            if (pool.has("infos_complementaires")) {
-                                infosComplementaires = pool
-                                        .getAsJsonPrimitive("infos_complementaires").getAsString();
-                            }
-
-                            String nomUsuel = pool
-                                    .getAsJsonPrimitive("nom_usuel").getAsString();
-                            String adresse = pool
-                                    .getAsJsonPrimitive("adresse").getAsString();
-
-                            int solarium = -1;
-                            if (pool.has("solarium")) {
-                                solarium = pool
-                                        .getAsJsonPrimitive("solarium").getAsString()
-                                        .equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            int libreService = -1;
-                            if (pool.has("libre_service")) {
-                                libreService = pool
-                                        .getAsJsonPrimitive("libre_service")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            int bassinSportif = -1;
-                            if (pool.has("bassin_sportif")) {
-                                bassinSportif = pool
-                                        .getAsJsonPrimitive("bassin_sportif")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            int bassinApprentissage = -1;
-                            if (pool.has("bassin_apprentissage")) {
-                                bassinApprentissage = pool
-                                        .getAsJsonPrimitive("bassin_apprentissage")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            String web = null;
-                            if (pool.has("web")) {
-                                web = pool.getAsJsonPrimitive("web").getAsString();
-                            }
-
-                            int plongeoir = -1;
-                            if (pool.has("plongeoir")) {
-                                plongeoir = pool.getAsJsonPrimitive("plongeoir")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            String idobj = pool.getAsJsonPrimitive("idobj").getAsString();
-                            String nomComplet = pool.getAsJsonPrimitive("nom_complet").getAsString();
-
-                            int toboggan = -1;
-                            if (pool.has("toboggan")) {
-                                toboggan = pool.getAsJsonPrimitive("toboggan")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            int pataugeoire = -1;
-                            if (pool.has("pataugeoire")) {
-                                pataugeoire = pool.getAsJsonPrimitive("pataugeoire")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            int accessibiliteHandicap = -1;
-                            if (pool.has("accessibilite_handicap")) {
-                                accessibiliteHandicap = pool
-                                        .getAsJsonPrimitive("accessibilite_handicap")
-                                        .getAsString().equals("OUI")
-                                        ? 1
-                                        : 0;
-                            }
-
-                            String cp = pool.getAsJsonPrimitive("cp").getAsString();
-                            JsonArray location_json = pool.getAsJsonArray("location");
-                            List<Double> location = new ArrayList<>();
-                            location.add(location_json.get(0).getAsDouble());
-                            location.add(location_json.get(1).getAsDouble());
-
-                            String moyenPaiement = null;
-                            if (pool.has("moyen_paiement")) {
-                                moyenPaiement = pool.getAsJsonPrimitive("moyen_paiement").getAsString();
-                            }
-
-                            String accesTransportsCommun = null;
-                            if (pool.has("acces_transports_commun")) {
-                                accesTransportsCommun = pool
-                                        .getAsJsonPrimitive("acces_transports_commun")
-                                        .getAsString();
-                            }
-
-                            Map<String, Integer> informations = new HashMap<>();
-
-                            informations.put("Libre Service", libreService);
-                            informations.put("Solarium", solarium);
-                            informations.put("Bassin Loisir", bassinLoisir);
-                            informations.put("Acces Handicap et PMR Equipement", accesPmrEquipt);
-                            informations.put("Bassin Sportif", bassinSportif);
-                            informations.put("Bassin Apprentissage", bassinApprentissage);
-                            informations.put("Plongeoir", plongeoir);
-                            informations.put("Toboggan", toboggan);
-                            informations.put("Pataugeoire", pataugeoire);
-                            informations.put("Acces Handicapé", accessibiliteHandicap);
-                            item.setInformation(informations);
-
-                            item.setAccesTransportsCommun(accesTransportsCommun);
-                            item.setCommune(commune);
-                            item.setTel(tel);
-                            item.setInfosComplementaires(infosComplementaires);
-                            item.setNomComplet(nomComplet);
-                            item.setNomUsuel(nomUsuel);
-                            item.setAdresse(adresse);
-                            item.setWeb(web);
-                            item.setIdobj(idobj);
-                            item.setCp(cp);
-                            item.setLocation(location);
-                            item.setMoyenPaiement(moyenPaiement);
-
-                            item.setVisited(false);
-                            item.setRate(0);
-
-                            item.setPosition(cpt);
-                            setPoolFromSharedPreferences(item);
-                            cpt++;
-                        }
-                        setList_Pools();
-                    }
-                });
+    public void getPools(ArrayList<Pool> pools) {
+        monAdapter.addAll(pools);
+        monAdapter.notifyDataSetChanged();
+        getDistance();
     }
 
     private void setList_Pools() {
@@ -417,8 +242,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             Pool add = getPoolFromSharedPreferences(i);
             monAdapter.add(add);
         }
-
-
+        monAdapter.notifyDataSetChanged();
+        getDistance();
     }
 
     @Override
@@ -648,11 +473,5 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 mBuilder.show();
                 break;
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        getDistance();
     }
 }
