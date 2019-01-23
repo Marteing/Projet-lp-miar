@@ -5,6 +5,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -81,7 +83,20 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
         if (intent != null) {
             pool = (Pool) intent.getSerializableExtra("pool");
 
-            getHoraire(pool.getIdobj());
+            if(isNetworkAvailable()){
+                getHoraire(pool.getIdobj());
+            }else{
+                TableLayout table = (TableLayout) findViewById(R.id.info_schedules);
+                TableRow row  = new TableRow(this); // création d'un élément : ligne
+                TextView cel = new TextView(this); // création cellule
+                cel.setText("Pas de connection internet   Veuillez recharger la page"); // ajout du texte
+                cel.setGravity(Gravity.CENTER); // centrage dans la cellule
+                cel.setTextSize(24);
+                // adaptation de la largeur de colonne à l'écran :
+                cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                row.addView(cel);
+                table.addView(row);
+            }
             position = intent.getIntExtra("position", -1);
             ratingBar = (RatingBar) findViewById(R.id.rating_bar);
             ratingBar.setRating(pool.getRate());
@@ -193,6 +208,14 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             }
         }
     }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 
     private void initFabMenu() {
         fabMenu = (FloatingActionButton) findViewById(R.id.fabMenu);

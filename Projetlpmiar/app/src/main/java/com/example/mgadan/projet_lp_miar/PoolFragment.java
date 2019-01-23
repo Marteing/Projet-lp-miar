@@ -101,18 +101,26 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pool, container, false);
 
+        locationManager = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
+        ArrayList<LocationProvider> providers = new ArrayList<LocationProvider>();
+
+        List<String> names = locationManager.getProviders(true);
+
+        for (String name : names)
+            providers.add(locationManager.getProvider(name));
+
         monAdapter = new PoolAdapter(getActivity(), list_pools, criterSelected);
         listView = (ListView) view.findViewById(R.id.list_pools);
         listView.setAdapter(monAdapter);
         listView.setOnItemClickListener(this);
         if (isNetworkAvailable()) {
             poolFragment = this;
-            getNbPool(url);
             initView(view);
+            getNbPool(url);
         } else {
             if (getPoolFromSharedPreferences(0) != null) {
-                setList_Pools();
                 initView(view);
+                setList_Pools();
             }else{
                 AlertDialog alertDialog = new AlertDialog.Builder(this.getContext()).create();
                 alertDialog.setTitle("Pas d'internet");
@@ -142,13 +150,6 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         ImageButton parameter = view.findViewById(R.id.parameter);
 
         parameter.setOnClickListener(this);
-        locationManager = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
-        ArrayList<LocationProvider> providers = new ArrayList<LocationProvider>();
-
-        List<String> names = locationManager.getProviders(true);
-
-        for (String name : names)
-            providers.add(locationManager.getProvider(name));
     }
 
     public void getDistance(){
