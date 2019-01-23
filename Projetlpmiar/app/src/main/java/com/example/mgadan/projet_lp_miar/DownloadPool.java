@@ -46,8 +46,8 @@ public class DownloadPool extends AsyncTask<String, Void, ArrayList<Pool>> {
 
     @Override
     protected void onPreExecute() {
-        progressDialog.setTitle("Please wait");
-        progressDialog.setMessage("Fetching remote data...");
+        progressDialog.setTitle("Veuillez Patienter");
+        progressDialog.setMessage("Chargement des données...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.show();
     }
@@ -194,7 +194,6 @@ public class DownloadPool extends AsyncTask<String, Void, ArrayList<Pool>> {
                 String cp = pool.getString("cp");
                 JSONArray location_json = pool.getJSONArray("location");
                 List<Double> location = new ArrayList<>();
-                Log.d("test ASYNCH 0", location_json.getDouble(0) +  " " + location_json.getDouble(1));
                 location.add(location_json.getDouble(0));
                 location.add(location_json.getDouble(1));
 

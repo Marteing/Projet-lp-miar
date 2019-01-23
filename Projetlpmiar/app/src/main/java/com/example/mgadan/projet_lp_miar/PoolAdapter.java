@@ -1,6 +1,7 @@
 package com.example.mgadan.projet_lp_miar;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -33,6 +36,9 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
             "Acces Handicapé",
             //"Acces Transport"
     };
+    private static final String PREFS_TAG = "SharedPrefs";
+
+
 
     public PoolAdapter(Context context, List<Pool> pools, String[] criterSelected) {
         super(context, 0,  pools);
@@ -87,13 +93,14 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
                 public void onClick(View v) {
                     pool.setVisited(!pool.isVisited());
                     isVisited.setChecked(pool.isVisited());
+                    setPoolFromSharedPreferences(pool);
                 }
             });
             isVisited.setChecked(pool.isVisited());
 
             TextView distance = convertView.findViewById(R.id.distance);
             if(pool.getDistanceBetweenUserAndPool() != 0.00){
-                distance.setText(Math.round(pool.getDistanceBetweenUserAndPool()) + " m");
+                distance.setText(pool.getDistanceBetweenUserAndPool() + " km");
             }else{
                 distance.setText("");
             }
@@ -102,4 +109,14 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
 
         return convertView;
     }
+
+    private void setPoolFromSharedPreferences(Pool pool) {
+        SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(pool);
+        editor.putString("pool" + pool.getPosition(), json);
+        editor.commit();
+    }
+
 }

@@ -50,12 +50,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     private PoolAdapter monAdapter;
     private List<Pool> list_pools = new ArrayList<Pool>();
     private static String url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole";
-    int FLAG_ACTIVITY = 1;
+    private static int FLAG_ACTIVITY = 1;
 
-    ImageView note_header;
-    ImageButton img1, img2, img3, img4;
+    private ImageView note_header;
+    private ImageButton img1, img2, img3, img4, img5;
     private static final String PREFS_TAG = "SharedPrefs";
-    private static final String PRODUCT_TAG = "MyProduct";
     ListView listView;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -93,7 +92,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             "Acces Handicapé",
     };
 
-    LocationManager locationManager;
+    private LocationManager locationManager;
 
     @Nullable
     @Override
@@ -137,11 +136,13 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         img2 = (ImageButton) view.findViewById(R.id.img2_header);
         img3 = (ImageButton) view.findViewById(R.id.img3_header);
         img4 = (ImageButton) view.findViewById(R.id.img4_header);
+        img5 = (ImageButton) view.findViewById(R.id.img5_header);
 
         img1.setOnClickListener(this);
         img2.setOnClickListener(this);
         img3.setOnClickListener(this);
         img4.setOnClickListener(this);
+        img5.setOnClickListener(this);
 
         note_header = view.findViewById(R.id.note_header);
 
@@ -169,8 +170,6 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                         if(p != null){
                             p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
                                     p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
-                        }else{
-                            Log.d("chelou",   p + "" + list_pools.size());
                         }
 
                     }
@@ -203,20 +202,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION : {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getDistance();
-                }
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                }
-                return;
-            }
-
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        getDistance();
     }
 
     private boolean isNetworkAvailable() {
@@ -239,7 +226,10 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         double t3 = Math.sin(a1) * Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
-        return 6366000 * tt;
+        int scale = (int) Math.pow(10, 1);
+
+        double res = 6366000 * tt;
+        return Math.round(res * scale) / scale;
     }
 
     private void getNbPool(final String url) {
@@ -385,6 +375,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0));
                 img4.setColorFilter(Color.argb(255, 0, 0, 0));
+                img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
 
                 break;
             case R.id.img2_header:
@@ -400,6 +391,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 img2.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+
                 break;
             case R.id.img3_header:
                 monAdapter.sort(new Comparator<Pool>() {
@@ -414,6 +407,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
                 img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+
                 break;
             case R.id.img4_header:
                 monAdapter.sort(new Comparator<Pool>() {
@@ -428,12 +423,29 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img4.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+
                 break;
             case R.id.note_header:
                 monAdapter.sort(new Comparator<Pool>() {
                     @Override
                     public int compare(Pool p1, Pool p2) {
                         return  p2.getRate() - p1.getRate();
+                    }
+                });
+                monAdapter.notifyDataSetChanged();
+                break;
+            case R.id.img5_header:
+                img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
+                img5.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+
+                monAdapter.sort(new Comparator<Pool>() {
+                    @Override
+                    public int compare(Pool p1, Pool p2) {
+                        return Boolean.compare(p1.isVisited(), p2.isVisited());
                     }
                 });
                 monAdapter.notifyDataSetChanged();
@@ -469,10 +481,15 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         cpt[0] = 0;
+                        int p = 0;
+
                         for (boolean b : checOptions){
                             if(b){
+                                criterSelected[cpt[0]] = criterOptions[p];
                                 cpt[0]++;
                             }
+                            p++;
+
                         }
                         if(cpt[0] < 4){
                             while(cpt[0] < 4){
@@ -483,16 +500,6 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                                     cpt[0]++;
                                 }
                             }
-                        }
-                        cpt[0] = 0;
-                        int p = 0;
-
-                        for (boolean b : checOptions){
-                            if(b){
-                                criterSelected[cpt[0]] = criterOptions[p];
-                                cpt[0]++;
-                            }
-                            p++;
                         }
                         monAdapter = new PoolAdapter(getActivity(), list_pools, criterSelected);
                         listView.setAdapter(monAdapter);
