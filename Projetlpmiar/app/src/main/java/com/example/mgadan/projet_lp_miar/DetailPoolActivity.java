@@ -4,8 +4,6 @@ package com.example.mgadan.projet_lp_miar;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -136,7 +133,11 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             tel.setOnClickListener(this);
 
             url = findViewById(R.id.url);
-            url.setText("Site web : " + pool.getWeb());
+            if(pool.getWeb() != null && !pool.getWeb().isEmpty()){
+                url.setText("Site web : " + pool.getWeb());
+            }else{
+                url.setText("Site web : pas d'information" );
+            }
             url.setOnClickListener(this);
 
             TableLayout table = (TableLayout) findViewById(R.id.info_table);
@@ -469,12 +470,34 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
 
                             TextView cel; // création des cellules
                             TableRow row; // création d'un élément : ligne
-
+                            int cpt = 0;
                             for (DayOfWeek day : sortedKeys) {
 
                                 row = new TableRow(context);
                                 cel = new TextView(context); // création cellule
-                                cel.setText(day.toString().toLowerCase()); // ajout du texte
+                                switch (cpt) {
+                                    case 0:
+                                        cel.setText("Lundi"); // ajout du texte
+                                        break;
+                                    case 1:
+                                        cel.setText("Mardi"); // ajout du texte
+                                        break;
+                                    case 2:
+                                        cel.setText("Mercredi"); // ajout du texte
+                                        break;
+                                    case 3:
+                                        cel.setText("Jeudi"); // ajout du texte
+                                        break;
+                                    case 4:
+                                        cel.setText("Vendredi"); // ajout du texte
+                                        break;
+                                    case 5:
+                                        cel.setText("Samedi"); // ajout du texte
+                                        break;
+                                    case 6:
+                                        cel.setText("Dimanche"); // ajout du texte
+                                        break;
+                                }
                                 cel.setGravity(Gravity.LEFT); // centrage dans la cellule
                                 cel.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/project_paintball.otf"));
                                 cel.setTextSize(24);
@@ -510,7 +533,19 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                                 }
 
                                 table.addView(row);
+                                cpt++;
                             }
+                        }else{
+                            TableLayout table = (TableLayout) findViewById(R.id.info_schedules);
+                            TableRow row  = new TableRow(context); // création d'un élément : ligne
+                            TextView cel = new TextView(context); // création cellule
+                            cel.setText("Pas de données sur les horaires de la base de données"); // ajout du texte
+                            cel.setGravity(Gravity.CENTER); // centrage dans la cellule
+                            cel.setTextSize(24);
+                            // adaptation de la largeur de colonne à l'écran :
+                            cel.setLayoutParams(new TableRow.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                            row.addView(cel);
+                            table.addView(row);
                         }
                     }
                 });

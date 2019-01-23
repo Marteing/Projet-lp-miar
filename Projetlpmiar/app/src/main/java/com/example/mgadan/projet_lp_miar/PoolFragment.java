@@ -66,10 +66,10 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     PoolFragment poolFragment;
     //critère selectionné
     private String[] criterSelected = new String[]{
-            "Acces Handicapé",
             "Solarium",
             "Bassin Sportif",
-            "Toboggan"
+            "Toboggan",
+            "Acces Handicapé",
     };
 
     private static int[] imgsrc = new int[]{
@@ -175,6 +175,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         ImageButton parameter = view.findViewById(R.id.parameter);
 
         parameter.setOnClickListener(this);
+
+        updateImgHeader();
     }
 
     /**
@@ -272,7 +274,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         double tt = Math.acos(t1 + t2 + t3);
 
         double res = 6366000 * tt;
-        return Math.round(res) / 100;
+        return (Math.round(res) / 100) / 10;
     }
 
     /**

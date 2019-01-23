@@ -6,11 +6,11 @@
         <item
             android:id="@+id/nav_pool"
             android:icon="@drawable/ic_pool_black_24dp"
-            android:title="piscines" />
+            android:title="Piscines" />
         <item
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_account_circle_black_24dp"
-            android:title="connexion / inscription" />
+            android:title="Connexion/Inscription" />
     </group>
 
 
