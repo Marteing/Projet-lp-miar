@@ -363,8 +363,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
      */
     private int getNhitsFromSharedPreferences() {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-        int nhits = sharedPref.getInt("nhits", -1);
-        return nhits;
+        return sharedPref.getInt("nhits", -1);
     }
 
     /**
@@ -389,8 +388,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPref.getString("pool" + index, "");
-        Pool pool = gson.fromJson(json, Pool.class);
-        return pool;
+        return gson.fromJson(json, Pool.class);
     }
 
     /**
