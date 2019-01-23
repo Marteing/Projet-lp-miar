@@ -63,12 +63,13 @@
         >
 
         <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabCalendar"
+                android:id="@+id/fabInternet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fab_margin"
-                app:srcCompat="@drawable/ic_event_white_24dp"
-                />
+                app:srcCompat="@drawable/ic_public_black_24dp"
+                android:tint="@android:color/white"
+            />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabMaps"
