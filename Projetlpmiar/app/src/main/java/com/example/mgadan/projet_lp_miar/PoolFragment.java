@@ -371,7 +371,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     }
                 });
                 monAdapter.notifyDataSetChanged();
-                img1.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img1.setColorFilter(Color.argb(255, 37, 159, 190)); // Blue Tint
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0));
                 img4.setColorFilter(Color.argb(255, 0, 0, 0));
@@ -388,7 +388,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 monAdapter.notifyDataSetChanged();
 
                 img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
-                img2.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img2.setColorFilter(Color.argb(255, 37, 159, 190)); // Blue Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
@@ -405,7 +405,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
 
                 img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
-                img3.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img3.setColorFilter(Color.argb(255, 37, 159, 190)); // Blue Tint
                 img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
 
@@ -422,7 +422,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 img1.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
-                img4.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img4.setColorFilter(Color.argb(255, 37, 159, 190)); // Blue Tint
                 img5.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
 
                 break;
@@ -440,7 +440,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 img2.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img3.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
                 img4.setColorFilter(Color.argb(255, 0, 0, 0)); // White Tint
-                img5.setColorFilter(Color.argb(255, 0, 255, 0)); // White Tint
+                img5.setColorFilter(Color.argb(255, 37, 159, 190)); // Blue Tint
 
                 monAdapter.sort(new Comparator<Pool>() {
                     @Override
