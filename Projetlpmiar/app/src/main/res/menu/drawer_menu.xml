@@ -6,23 +6,12 @@
         <item
             android:id="@+id/nav_pool"
             android:icon="@drawable/ic_pool_black_24dp"
-            android:title="swimming pool" />
+            android:title="piscines" />
         <item
             android:id="@+id/nav_login"
             android:icon="@drawable/ic_account_circle_black_24dp"
-            android:title="login" />
+            android:title="connexion / inscription" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_information"
-                android:icon="@drawable/ic_info_black_24dp"
-                android:title="Information" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_send_black_24dp"
-                android:title="Contact" />
-        </menu>
-    </item>
+
 </menu>

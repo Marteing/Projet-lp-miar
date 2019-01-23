@@ -226,10 +226,8 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         double t3 = Math.sin(a1) * Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
-        int scale = (int) Math.pow(10, 1);
-
         double res = 6366000 * tt;
-        return Math.round(res * scale) / scale;
+        return Math.round(res) / 100;
     }
 
     private void getNbPool(final String url) {
@@ -445,7 +443,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 monAdapter.sort(new Comparator<Pool>() {
                     @Override
                     public int compare(Pool p1, Pool p2) {
-                        return Boolean.compare(p1.isVisited(), p2.isVisited());
+                        return Boolean.compare(p2.isVisited(), p1.isVisited());
                     }
                 });
                 monAdapter.notifyDataSetChanged();
