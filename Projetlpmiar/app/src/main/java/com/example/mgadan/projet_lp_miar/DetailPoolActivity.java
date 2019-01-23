@@ -51,21 +51,21 @@ import java.util.Locale;
 
 public class DetailPoolActivity extends AppCompatActivity implements View.OnClickListener, RatingBar.OnRatingBarChangeListener {
 
-    FloatingActionButton fabMenu, fabCall, fabInternet, fabMaps;
+    private FloatingActionButton fabMenu, fabCall, fabInternet, fabMaps;
 
-    OvershootInterpolator interpolator = new OvershootInterpolator();
-    Float translationY = 2000f;
-    Boolean isMenuOpen = false;
-    TextView tel, adresse, url;
-    Button isVisited;
-    Pool pool;
-    int position;
-    RatingBar ratingBar;
-    Intent beforeIntent;
+    private OvershootInterpolator interpolator = new OvershootInterpolator();
+    private Float translationY = 2000f;
+    private Boolean isMenuOpen = false;
+    private TextView tel, adresse, url;
+    private Button isVisited;
+    private Pool pool;
+    private int position;
+    private RatingBar ratingBar;
+    private Intent beforeIntent;
 
-    String URL_SHEDULE = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole-horaires&q=";
+    private String URL_SHEDULE = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole-horaires&q=";
 
-    Context context = this;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -355,7 +355,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     Toast.makeText(this, "Télécharger une application pour téléphoner", Toast.LENGTH_LONG).show();// no phone
                 }else{
                     Intent intent1 = new Intent(Intent.ACTION_DIAL);
-                    intent1.setData(Uri.parse("tel:" + tel.getText()));
+                    intent1.setData(Uri.parse("tel:" + pool.getTel()));
                     startActivity(intent1);
                 }
                 break;
