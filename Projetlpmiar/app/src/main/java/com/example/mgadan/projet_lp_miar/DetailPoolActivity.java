@@ -4,6 +4,7 @@ package com.example.mgadan.projet_lp_miar;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -53,7 +54,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     FloatingActionButton fabMenu, fabCall, fabInternet, fabMaps;
 
     OvershootInterpolator interpolator = new OvershootInterpolator();
-    Float translationY = 100f;
+    Float translationY = 2000f;
     Boolean isMenuOpen = false;
     TextView tel, adresse, url;
     Button isVisited;
@@ -135,7 +136,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             tel.setOnClickListener(this);
 
             url = findViewById(R.id.url);
-            url.setText("Website : " + pool.getWeb());
+            url.setText("Site web : " + pool.getWeb());
             url.setOnClickListener(this);
 
             TableLayout table = (TableLayout) findViewById(R.id.info_table);
@@ -297,9 +298,13 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.fabMaps:
-                String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=" + pool.getNomComplet(), pool.getLocation().get(0), pool.getLocation().get(1));
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                this.startActivity(intent);
+                    String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=" + pool.getNomComplet(), pool.getLocation().get(0), pool.getLocation().get(1));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                if(intent.resolveActivity(getPackageManager()) != null){
+                    this.startActivity(intent);
+                }else{
+                    Toast.makeText(this, "Télécharger l'application google Maps", Toast.LENGTH_LONG).show();// no phone
+                }
                 break;
             case R.id.tel:
                 if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -370,7 +375,6 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
     }
     private void getHoraire(String id) {
         final TableLayout table = (TableLayout) findViewById(R.id.info_schedules);
-
         Ion.with(this)
                 .load(URL_SHEDULE + id)
                 .asJsonObject()
