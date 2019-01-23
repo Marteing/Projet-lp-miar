@@ -99,7 +99,7 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
 
             TextView distance = convertView.findViewById(R.id.distance);
             if(pool.getDistanceBetweenUserAndPool() != 0.00){
-                distance.setText(pool.getDistanceBetweenUserAndPool() + " km");
+                distance.setText(Math.round(pool.getDistanceBetweenUserAndPool()) + " m");
             }else{
                 distance.setText("");
             }

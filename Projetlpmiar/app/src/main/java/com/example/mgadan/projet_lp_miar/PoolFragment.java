@@ -2,6 +2,7 @@ package com.example.mgadan.projet_lp_miar;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -200,8 +201,9 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                             p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
                                     p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
                         }
-
                     }
+                    monAdapter.notifyDataSetChanged();
+
                     monAdapter.sort(new Comparator<Pool>() {
                         @Override
                         public int compare(Pool o1, Pool o2) {
@@ -261,20 +263,16 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
      * @return
      */
     private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
-        float pk = (float) (180.f / Math.PI);
+        double earthRadius = 6371000; //meters
+        double dLat = Math.toRadians(lat_b-lat_a);
+        double dLng = Math.toRadians(lng_b-lng_a);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(dLng/2) * Math.sin(dLng/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        float dist = (float) (earthRadius * c);
 
-        double a1 = lat_a / pk;
-        double a2 = lng_a / pk;
-        double b1 = lat_b / pk;
-        double b2 = lng_b / pk;
-
-        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
-        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
-        double t3 = Math.sin(a1) * Math.sin(b1);
-        double tt = Math.acos(t1 + t2 + t3);
-
-        double res = 6366000 * tt;
-        return (Math.round(res) / 100) / 10;
+        return dist;
     }
 
     /**
