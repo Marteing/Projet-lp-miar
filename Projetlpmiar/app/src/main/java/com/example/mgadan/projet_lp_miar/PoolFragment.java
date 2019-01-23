@@ -108,12 +108,23 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         if (isNetworkAvailable()) {
             poolFragment = this;
             getNbPool(url);
+            initView(view);
         } else {
             if (getPoolFromSharedPreferences(0) != null) {
                 setList_Pools();
+                initView(view);
+            }else{
+                AlertDialog alertDialog = new AlertDialog.Builder(this.getContext()).create();
+                alertDialog.setTitle("Pas d'internet");
+                alertDialog.setMessage("La première utilisation de l'application doit avoir internet pour récupérer les données");
+                alertDialog.show();
             }
         }
 
+        return view;
+    }
+
+    public void initView(View view){
         img1 = (ImageButton) view.findViewById(R.id.img1_header);
         img2 = (ImageButton) view.findViewById(R.id.img2_header);
         img3 = (ImageButton) view.findViewById(R.id.img3_header);
@@ -138,7 +149,6 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
 
         for (String name : names)
             providers.add(locationManager.getProvider(name));
-        return view;
     }
 
     public void getDistance(){
@@ -188,6 +198,24 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 }
             });
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION : {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getDistance();
+                }
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                }
+                return;
+            }
+
     }
 
     private boolean isNetworkAvailable() {

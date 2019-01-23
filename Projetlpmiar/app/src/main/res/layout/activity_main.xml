@@ -27,25 +27,29 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:src="@drawable/plouffe_logo" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/plouffe_logo"
-                android:layout_gravity="start" />
+                </FrameLayout>
+
 
             <ImageButton
                 android:id="@+id/isFavoris"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="end"
                 android:background="@null"
                 android:src="@drawable/ic_settings_black_24dp"
-                android:text="Favoris"
-                android:textColor="#FFF"
                 android:textSize="12sp"
                 android:tint="@android:color/white" />
             </LinearLayout>
