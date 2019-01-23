@@ -71,6 +71,19 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             "Bassin Sportif",
             "Toboggan"
     };
+
+    private static int[] imgsrc = new int[]{
+            R.drawable.ic_add_shopping_cart_black_24dp,
+            R.drawable.ic_wb_sunny_black_24dp,
+            R.drawable.ic_tonality_black_24dp,
+            R.drawable.ic_settings_black_24dp,
+            R.drawable.ic_fitness_center_black_24dp,
+            R.drawable.ic_book_black_24dp,
+            R.drawable.ic_call_received_black_24dp,
+            R.drawable.ic_pool_black_24dp,
+            R.drawable.ic_add_shopping_cart_black_24dp,
+            R.drawable.ic_accessible_black_24dp,
+    };
     //option coché pour l'alert dialog
     boolean[] checOptions = new boolean[]{
             false,
@@ -536,11 +549,40 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                         monAdapter = new PoolAdapter(getActivity(), list_pools, criterSelected);
                         listView.setAdapter(monAdapter);
                         monAdapter.notifyDataSetChanged();
+                        updateImgHeader();
                     }
                 });
 
                 mBuilder.show();
                 break;
+        }
+    }
+
+    private void updateImgHeader(){
+        int cpt = 0;
+        int count = 0;
+        for (boolean b : checOptions){
+            if(b){
+                switch (count){
+                    case 0:
+                        img1.setImageResource(imgsrc[cpt]);
+                        count++;
+                        break;
+                    case 1:
+                        img2.setImageResource(imgsrc[cpt]);
+                        count++;
+                        break;
+                    case 2:
+                        img3.setImageResource(imgsrc[cpt]);
+                        count++;
+                        break;
+                    case 3:
+                        img4.setImageResource(imgsrc[cpt]);
+                        count++;
+                        break;
+                }
+            }
+            cpt++;
         }
     }
 }
