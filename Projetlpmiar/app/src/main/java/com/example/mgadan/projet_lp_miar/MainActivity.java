@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         isFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), icone_detail.class);
+                Intent intent = new Intent(v.getContext(), IconeDetail.class);
                 startActivity(intent);
             }
         });

@@ -19,19 +19,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextAppearance="@style/ActionBarTitleStyle">
 
-            <!--<ImageButton-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="end"-->
-                <!--android:id="@+id/isFavoris"-->
-                <!--android:textSize="12sp"-->
-                <!--android:background="@null"-->
-                <!--android:layout_alignParentEnd="true"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:textColor="#FFF"-->
-                <!--android:text="Favoris"-->
-                <!--android:src="@drawable/ic_star_border_white_24dp"/>-->
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

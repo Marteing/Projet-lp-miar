@@ -30,7 +30,9 @@
             android:name=".DetailPoolActivity"
             android:label="@string/title_activity_detail_pool"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".icone_detail"></activity>
+        <activity
+            android:name=".IconeDetail"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
