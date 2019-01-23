@@ -14,19 +14,15 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -46,27 +42,36 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class PoolFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener {
 
+    //nombre total de piscines présent dans l'API Open data de nantes
     private int nbPool = 0;
+
+    //Liste des piscines
     private PoolAdapter monAdapter;
     private List<Pool> list_pools = new ArrayList<Pool>();
+    //URL
     private static String url = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole";
+    //flag de l'activité DetailPools
     private static int FLAG_ACTIVITY = 1;
-
+    //image des notes
     private ImageView note_header;
+    //Image du header permettant le tri
     private ImageButton img1, img2, img3, img4, img5;
+    //Tag de la base de donnée
     private static final String PREFS_TAG = "SharedPrefs";
-    ListView listView;
+    //List vue
+    private ListView listView;
+    //permission de la geolocalisation
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
+    //vue
     PoolFragment poolFragment;
-
+    //critère selectionné
     private String[] criterSelected = new String[]{
             "Acces Handicapé",
             "Solarium",
             "Bassin Sportif",
             "Toboggan"
     };
-
+    //option coché pour l'alert dialog
     boolean[] checOptions = new boolean[]{
             false,
             true,
@@ -79,6 +84,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             false,
             true,
     };
+    //liste total des options
     private static String[] criterOptions = new String[]{
             "Libre Service",
             "Solarium",
@@ -91,7 +97,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             "Pataugeoire",
             "Acces Handicapé",
     };
-
+    //objet servant de geolocalisation
     private LocationManager locationManager;
 
     @Nullable
@@ -131,6 +137,11 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         return view;
     }
 
+    /**
+     *
+     * initialise la vue si les données sont remplis
+     * @param view
+     */
     public void initView(View view){
         img1 = (ImageButton) view.findViewById(R.id.img1_header);
         img2 = (ImageButton) view.findViewById(R.id.img2_header);
@@ -153,6 +164,9 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         parameter.setOnClickListener(this);
     }
 
+    /**
+     * récupère la localisation du téléphone et calcul la distance entre les piscines
+     */
     public void getDistance(){
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -200,12 +214,22 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         }
     }
 
+    /**
+     * get distance
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         getDistance();
     }
 
+    /**
+     *
+     * @return true si le téléphone est connecté à un réseau sinon false
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -213,6 +237,14 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    /**
+     * Calcul la distance entre deux point géographique
+     * @param lat_a
+     * @param lng_a
+     * @param lat_b
+     * @param lng_b
+     * @return
+     */
     private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
         float pk = (float) (180.f / Math.PI);
 
@@ -226,12 +258,14 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         double t3 = Math.sin(a1) * Math.sin(b1);
         double tt = Math.acos(t1 + t2 + t3);
 
-        int scale = (int) Math.pow(10, 1);
-
         double res = 6366000 * tt;
-        return Math.round(res * scale) / scale;
+        return Math.round(res) / 100;
     }
 
+    /**
+     * get le nombre total de nhits
+     * @param url
+     */
     private void getNbPool(final String url) {
         Ion.with(this)
                 .load("GET", url)
@@ -250,13 +284,19 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 });
     }
 
-
+    /**
+     * instancie l'adapter
+     * @param pools
+     */
     public void getPools(ArrayList<Pool> pools) {
         monAdapter.addAll(pools);
         monAdapter.notifyDataSetChanged();
         getDistance();
     }
 
+    /**
+     * instancie l'adapter avec la base de données
+     */
     private void setList_Pools() {
         for (int i = 0; i < getNhitsFromSharedPreferences(); i++) {
             Pool add = getPoolFromSharedPreferences(i);
@@ -266,6 +306,13 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         getDistance();
     }
 
+    /**
+     * Clic sur un item de la liste
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(view.getContext(), DetailPoolActivity.class);
@@ -275,6 +322,12 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
 
+    /**
+     * récupère le résultat de la pisicne contenue dans détails
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FLAG_ACTIVITY && resultCode == getActivity().RESULT_OK) {
@@ -285,49 +338,14 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
             listView.setAdapter(monAdapter);
             monAdapter.notifyDataSetChanged();
             setPoolFromSharedPreferences(nvPool);
-
-
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 150, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        for (Pool p : list_pools) {
-                            p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
-                                    p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
-                        }
-
-                        monAdapter.sort(new Comparator<Pool>() {
-                            @Override
-                            public int compare(Pool o1, Pool o2) {
-                                return o1.getDistanceBetweenUserAndPool() > o2.getDistanceBetweenUserAndPool() ? 1 : -1;
-                            }
-                        });
-                        monAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-
-                    }
-                });
-            }
-
-
-            return;
+            getDistance();
         }
     }
 
+    /**
+     * enregistre le nombre total de la base de données
+     * @param nhits
+     */
     private void setNhitsFromSharedPreferences(int nhits) {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -335,12 +353,19 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         editor.commit();
     }
 
+    /**
+     * envoie le nombre total de la base de données
+     * @return
+     */
     private int getNhitsFromSharedPreferences() {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-        int nhits = sharedPref.getInt("nhits", -1);
-        return nhits;
+        return sharedPref.getInt("nhits", -1);
     }
 
+    /**
+     * set un objet piscine dans la base de données
+     * @param pool
+     */
     private void setPoolFromSharedPreferences(Pool pool) {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -350,15 +375,22 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
         editor.commit();
     }
 
+    /**
+     * récupère un objet piscine ddans la base de données
+     * @param index
+     * @return
+     */
     private Pool getPoolFromSharedPreferences(int index) {
         SharedPreferences sharedPref = getContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPref.getString("pool" + index, "");
-        Pool pool = gson.fromJson(json, Pool.class);
-        return pool;
+        return gson.fromJson(json, Pool.class);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    /**
+     *
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -445,7 +477,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 monAdapter.sort(new Comparator<Pool>() {
                     @Override
                     public int compare(Pool p1, Pool p2) {
-                        return Boolean.compare(p1.isVisited(), p2.isVisited());
+                        return Boolean.compare(p2.isVisited(), p1.isVisited());
                     }
                 });
                 monAdapter.notifyDataSetChanged();

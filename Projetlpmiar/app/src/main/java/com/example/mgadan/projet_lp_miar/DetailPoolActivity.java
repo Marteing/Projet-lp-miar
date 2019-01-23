@@ -4,6 +4,8 @@ package com.example.mgadan.projet_lp_miar;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -48,21 +51,21 @@ import java.util.Locale;
 
 public class DetailPoolActivity extends AppCompatActivity implements View.OnClickListener, RatingBar.OnRatingBarChangeListener {
 
-    FloatingActionButton fabMenu, fabCall, fabCalendar, fabMaps;
+    private FloatingActionButton fabMenu, fabCall, fabInternet, fabMaps;
 
-    OvershootInterpolator interpolator = new OvershootInterpolator();
-    Float translationY = 100f;
-    Boolean isMenuOpen = false;
-    TextView tel, adresse, url;
-    Button isVisited;
-    Pool pool;
-    int position;
-    RatingBar ratingBar;
-    Intent beforeIntent;
+    private OvershootInterpolator interpolator = new OvershootInterpolator();
+    private Float translationY = 2000f;
+    private Boolean isMenuOpen = false;
+    private TextView tel, adresse, url;
+    private Button isVisited;
+    private Pool pool;
+    private int position;
+    private RatingBar ratingBar;
+    private Intent beforeIntent;
 
-    String URL_SHEDULE = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole-horaires&q=";
+    private String URL_SHEDULE = "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_piscines-nantes-metropole-horaires&q=";
 
-    Context context = this;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +136,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
             tel.setOnClickListener(this);
 
             url = findViewById(R.id.url);
-            url.setText("Website : " + pool.getWeb());
+            url.setText("Site web : " + pool.getWeb());
             url.setOnClickListener(this);
 
             TableLayout table = (TableLayout) findViewById(R.id.info_table);
@@ -209,6 +212,10 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    /**
+     * detecte si le téléphone est connecté
+     * @return
+     */
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -216,56 +223,59 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
+    /**
+     * initialise le menu
+     */
     private void initFabMenu() {
         fabMenu = (FloatingActionButton) findViewById(R.id.fabMenu);
         fabMenu.setOnClickListener(this);
 
         fabCall = (FloatingActionButton) findViewById(R.id.fabCall);
-        fabCalendar = (FloatingActionButton) findViewById(R.id.fabCalendar);
+        fabInternet = (FloatingActionButton) findViewById(R.id.fabInternet);
         fabMaps = (FloatingActionButton) findViewById(R.id.fabMaps);
 
         fabCall.setAlpha(0f);
-        fabCalendar.setAlpha(0f);
+        fabInternet.setAlpha(0f);
         fabMaps.setAlpha(0f);
 
         fabCall.setTranslationY(translationY);
-        fabCalendar.setTranslationY(translationY);
+        fabInternet.setTranslationY(translationY);
         fabMaps.setTranslationY(translationY);
 
         fabCall.setOnClickListener(this);
-        fabCalendar.setOnClickListener(this);
+        fabInternet.setOnClickListener(this);
         fabMaps.setOnClickListener(this);
     }
 
+    /**
+     * ouvre le menu
+     */
     private void openMenu() {
         isMenuOpen = !isMenuOpen;
 
         fabMenu.animate().setInterpolator(interpolator).rotationBy(45f).setDuration(300).start();
 
         fabMaps.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
-        fabCalendar.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
+        fabInternet.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
         fabCall.animate().translationY(0f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
 
 
         fabCall.setEnabled(true);
-        fabCalendar.setEnabled(true);
+        fabInternet.setEnabled(true);
         fabMaps.setEnabled(true);
     }
 
+    /**
+     * ferme le menu du floating button
+     */
     private void closeMenu() {
         isMenuOpen = !isMenuOpen;
 
         fabMenu.animate().setInterpolator(interpolator).rotationBy(-45f).setDuration(300).start();
 
         fabMaps.animate().translationY(2000f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
-        fabCalendar.animate().translationY(2000f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
+        fabInternet.animate().translationY(2000f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
         fabCall.animate().translationY(2000f).alpha(1f).setInterpolator(interpolator).setDuration(300).start();
-
-//        fabCall.setEnabled(false);
-//        fabCalendar.setEnabled(false);
-//        fabMaps.setEnabled(false);
-
     }
 
     @Override
@@ -288,9 +298,13 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
             case R.id.fabMaps:
-                String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=" + pool.getNomComplet(), pool.getLocation().get(0), pool.getLocation().get(1));
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                this.startActivity(intent);
+                    String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=" + pool.getNomComplet(), pool.getLocation().get(0), pool.getLocation().get(1));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                if(intent.resolveActivity(getPackageManager()) != null){
+                    this.startActivity(intent);
+                }else{
+                    Toast.makeText(this, "Télécharger l'application google Maps", Toast.LENGTH_LONG).show();// no phone
+                }
                 break;
             case R.id.tel:
                 if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -301,7 +315,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", tel.getText());
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Copié dans le presse-papier", Toast.LENGTH_LONG).show();
                 break;
             case R.id.url:
                 if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -312,7 +326,7 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", url.getText());
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Copié dans le presse-papier", Toast.LENGTH_LONG).show();
                 break;
             case R.id.adresse:
                 if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -323,15 +337,27 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", adresse.getText());
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Copié dans le presse-papier", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.fabCalendar:
-                Toast.makeText(this, "Calendar", Toast.LENGTH_LONG).show();
+            case R.id.fabInternet:
+                if(pool.getWeb() != null && !pool.getWeb().isEmpty()){
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(pool.getWeb()));
+                    startActivity(browserIntent);
+                }else{
+                    Toast.makeText(this, "Pas de site web", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.fabCall:
-                Intent intent1 = new Intent(Intent.ACTION_DIAL);
-                intent1.setData(Uri.parse("tel:" + tel.getText()));
-                startActivity(intent1);
+                if (((TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE)).getPhoneType()
+                        == TelephonyManager.PHONE_TYPE_NONE)
+                {
+                    Toast.makeText(this, "Télécharger une application pour téléphoner", Toast.LENGTH_LONG).show();// no phone
+                }else{
+                    Intent intent1 = new Intent(Intent.ACTION_DIAL);
+                    intent1.setData(Uri.parse("tel:" + pool.getTel()));
+                    startActivity(intent1);
+                }
                 break;
             case R.id.isVisited:
                 pool.setVisited(!pool.isVisited());
@@ -347,10 +373,8 @@ public class DetailPoolActivity extends AppCompatActivity implements View.OnClic
                 break;
         }
     }
-
     private void getHoraire(String id) {
         final TableLayout table = (TableLayout) findViewById(R.id.info_schedules);
-
         Ion.with(this)
                 .load(URL_SHEDULE + id)
                 .asJsonObject()
