@@ -219,16 +219,10 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 150, new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-                        Log.d("location", "test");
-
                         for (Pool p : list_pools) {
                             if(p != null){
-                                Log.d("calcl des distance", ""+ meterDistanceBetweenPoints(
-                                        p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
                                 p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
                                         p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
-                            }else{
-                                Log.d("erreur", "test");
                             }
                         }
 
