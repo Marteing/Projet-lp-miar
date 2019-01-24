@@ -98,7 +98,7 @@ public class PoolAdapter extends ArrayAdapter<Pool>{
             isVisited.setChecked(pool.isVisited());
 
             TextView distance = convertView.findViewById(R.id.distance);
-            if(pool.getDistanceBetweenUserAndPool() != 0.00){
+            if(pool.getDistanceBetweenUserAndPool() != 0){
                 distance.setText(Math.round(pool.getDistanceBetweenUserAndPool()) + " m");
             }else{
                 distance.setText("");

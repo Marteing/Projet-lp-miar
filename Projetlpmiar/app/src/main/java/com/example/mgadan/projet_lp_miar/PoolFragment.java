@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,13 +121,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pool, container, false);
 
-        locationManager = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
-        ArrayList<LocationProvider> providers = new ArrayList<LocationProvider>();
 
-        List<String> names = locationManager.getProviders(true);
-
-        for (String name : names)
-            providers.add(locationManager.getProvider(name));
 
         monAdapter = new PoolAdapter(getActivity(), list_pools, criterSelected);
         listView = (ListView) view.findViewById(R.id.list_pools);
@@ -193,41 +188,77 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
         } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 150, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    for (Pool p : list_pools) {
-                        if(p != null){
-                            p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
-                                    p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
-                        }
+            locationManager = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
+            ArrayList<LocationProvider> providers = new ArrayList<LocationProvider>();
+
+            List<String> names = locationManager.getProviders(true);
+
+            for (String name : names)
+                providers.add(locationManager.getProvider(name));
+
+            Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            if(myLocation != null){
+
+                for (Pool p : list_pools) {
+                    if(p != null){
+
+                        p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
+                                p.getLocation().get(0), p.getLocation().get(1), myLocation.getLatitude(), myLocation.getLongitude()));
                     }
-                    monAdapter.notifyDataSetChanged();
+                }
 
-                    monAdapter.sort(new Comparator<Pool>() {
-                        @Override
-                        public int compare(Pool o1, Pool o2) {
-                            return o1.getDistanceBetweenUserAndPool() > o2.getDistanceBetweenUserAndPool() ? 1 : -1;
+                monAdapter.sort(new Comparator<Pool>() {
+                    @Override
+                    public int compare(Pool o1, Pool o2) {
+                        return o1.getDistanceBetweenUserAndPool() > o2.getDistanceBetweenUserAndPool() ? 1 : -1;
+                    }
+                });
+                monAdapter.notifyDataSetChanged();
+            }
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 150, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Log.d("location", "test");
+
+                        for (Pool p : list_pools) {
+                            if(p != null){
+                                Log.d("calcl des distance", ""+ meterDistanceBetweenPoints(
+                                        p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
+                                p.setDistanceBetweenUserAndPool(meterDistanceBetweenPoints(
+                                        p.getLocation().get(0), p.getLocation().get(1), location.getLatitude(), location.getLongitude()));
+                            }else{
+                                Log.d("erreur", "test");
+                            }
                         }
-                    });
-                    monAdapter.notifyDataSetChanged();
-                }
 
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
+                        monAdapter.sort(new Comparator<Pool>() {
+                            @Override
+                            public int compare(Pool o1, Pool o2) {
+                                return o1.getDistanceBetweenUserAndPool() > o2.getDistanceBetweenUserAndPool() ? 1 : -1;
+                            }
+                        });
+                        monAdapter.notifyDataSetChanged();
+                    }
 
-                }
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-                @Override
-                public void onProviderEnabled(String provider) {
+                    }
 
-                }
+                    @Override
+                    public void onProviderEnabled(String provider) {
 
-                @Override
-                public void onProviderDisabled(String provider) {
+                    }
 
-                }
-            });
+                    @Override
+                    public void onProviderDisabled(String provider) {
+
+                    }
+                });
+
+
+
         }
     }
 
@@ -262,7 +293,7 @@ public class PoolFragment extends Fragment implements AdapterView.OnItemClickLis
      * @param lng_b
      * @return
      */
-    private double meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
+    private float meterDistanceBetweenPoints(double lat_a, double lng_a, double lat_b, double lng_b) {
         double earthRadius = 6371000; //meters
         double dLat = Math.toRadians(lat_b-lat_a);
         double dLng = Math.toRadians(lng_b-lng_a);

@@ -25,13 +25,13 @@ public class Pool implements Serializable {
     private String accesTransportsCommun;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    private transient double  distanceBetweenUserAndPool = 0.00;
+    private transient float  distanceBetweenUserAndPool = 0;
 
-    public double getDistanceBetweenUserAndPool() {
+    public float getDistanceBetweenUserAndPool() {
         return distanceBetweenUserAndPool;
     }
 
-    public void setDistanceBetweenUserAndPool(double distanceBetweenUserAndPool) {
+    public void setDistanceBetweenUserAndPool(float distanceBetweenUserAndPool) {
         this.distanceBetweenUserAndPool = distanceBetweenUserAndPool;
     }
 
